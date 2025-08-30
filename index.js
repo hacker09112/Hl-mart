@@ -19,7 +19,7 @@ const allowedOrigins = [
   "http://localhost:5000",
   "http://10.0.2.2:19000",
   "http://192.168.100.12:19000",
-  "https://project-production-2420.up.railway.app",
+  "https://hl-mart-production.up.railway.app",
 ];
 
 app.use(
