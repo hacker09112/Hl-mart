@@ -230,7 +230,7 @@ await user.save()
 
 
 
-module.exports = sendEmail;
+
 
 
 // SEND VERIFICATION EMAIL
