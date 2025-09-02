@@ -230,12 +230,15 @@ await user.save()
 
 
 
+
+module.exports = sendEmail;
+
+
 // SEND VERIFICATION EMAIL
 const sendVerificationEmailForget = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
-    secure: true,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -244,7 +247,7 @@ const sendVerificationEmailForget = async (email, verificationToken) => {
 
 
   const mailOptions = {
-    from: process.env.MAIL_FROM || `"HL" <${process.env.SMTP_USER}>`,
+       from: process.env.MAIL_FROM,
     to: email,
     subject: "Verify your email",
     html: `
