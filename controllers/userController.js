@@ -53,8 +53,7 @@ export const register = catchAsyncError(async (req, res, next) => {
 const sendVerificationEmail = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port:process.env.SMTP_PORT,
-    secure: true,
+    port: process.env.SMTP_PORT,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
