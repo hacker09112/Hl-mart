@@ -48,6 +48,12 @@ const userSchema = new mongoose.Schema({
       ref: "Order",
     },
   ],
+  products: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

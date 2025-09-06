@@ -6,6 +6,7 @@ import { errorMiddleware } from "./middleware/error.js";
 import userRoute from "./routes/userRoute.js";
 import orderRoute from "./routes/orderRoute.js";
 import productRoute from "./routes/productRoute.js";
+import messageRoute from "./routes/messageRoute.js";
 import { removeUnverifiedAccounts } from "./automation/removeUnverifiedUser.js";
 import crypto from "crypto";
 import path from "path";
@@ -131,7 +132,7 @@ app.post("/api/payment/jazzcash/response", (req, res) => {
 
     // Step 3: Verify response code
     if (response.pp_ResponseCode === "000") {
-      console.log("✅ Payment successful for order:", response.pp_ProductID);
+      console.log("Payment successful for order:", response.pp_ProductID);
 
       // Example: Update order in DB (pseudo code)
       // await Order.findOneAndUpdate(
@@ -141,7 +142,7 @@ app.post("/api/payment/jazzcash/response", (req, res) => {
 
       return res.json({ success: true, message: "Payment successful", data: response });
     } else {
-      console.log("❌ Payment failed for order:", response.pp_ProductID);
+      console.log("Payment failed for order:", response.pp_ProductID);
       return res.json({ success: false, message: "Payment failed", data: response });
     }
   } catch (error) {
@@ -165,5 +166,6 @@ app.post("/api/payment/jazzcash/response", (req, res) => {
 app.use("/api/user",userRoute)
 app.use("/api/order",orderRoute)
 app.use("/api/product",productRoute)
+app.use("/api/messages",messageRoute)
 
 app.use(errorMiddleware)

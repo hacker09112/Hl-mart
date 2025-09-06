@@ -3,6 +3,7 @@ import ErrorHandler from '../middleware/error.js';
 import Product from "../models/productModel.js";
 import { v4 as uuidv4 } from "uuid";
 import { cloudinary } from '../config/cloudinary.js';
+import User from '../models/userModel.js';
 
 const extractPublicIdFromUrl = (url) => {
   if (!url) return null;
@@ -51,6 +52,7 @@ export const deleteImage = catchAsyncError(async (req, res, next) => {
 });
 
 export const addProduct = catchAsyncError(async (req, res, next) => {
+ const userId = req.user;
   const {
     title,
     offer,
@@ -64,6 +66,11 @@ export const addProduct = catchAsyncError(async (req, res, next) => {
     category
   } = req.body;
 
+    const user = await User.findById(userId._id);
+    if (!user) {
+      return next(new ErrorHandler("User not found", 404));
+    }
+
   if (!title || !price || !category) {
     return next(new ErrorHandler("Title, price, and category are required fields", 400));
   }
@@ -74,7 +81,8 @@ export const addProduct = catchAsyncError(async (req, res, next) => {
 
   const imagePublicIds = carouselImages.map(url => extractPublicIdFromUrl(url));
 
-  const product = await Product.create({
+  const product = new Product({
+     user: userId._id,
     id: uuidv4(),
     title,
     offer: offer || "",
@@ -89,6 +97,12 @@ export const addProduct = catchAsyncError(async (req, res, next) => {
     category,
     imagePublicIds
   });
+
+  await product.save();
+
+  user.products.push(product._id);
+  await user.save();
+
 
   res.status(201).json({
     success: true,
@@ -182,13 +196,26 @@ export const updateProduct = catchAsyncError(async (req, res, next) => {
 
 // Get all products
 export const getProducts = catchAsyncError(async (req, res, next) => {
-  const products = await Product.find().sort({ createdAt: -1 });
+  const products = await Product.find().sort({ createdAt: -1 }).populate("user");
   
   res.status(200).json({
     success: true,
     products
   });
 });
+
+// Get allUser products
+export const getUserProducts = catchAsyncError(async (req, res, next) => {
+ const userId = req.user;
+  const products = await Product.find({ user: userId._id }).populate("user");
+  
+  res.status(200).json({
+    success: true,
+    products
+  });
+});
+
+
 
 // Get single product
 export const getProduct = catchAsyncError(async (req, res, next) => {

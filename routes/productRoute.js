@@ -8,8 +8,10 @@ import {
   getProducts, 
   updateProduct,
   uploadImage,
-  deleteImage 
+  deleteImage, 
+  getUserProducts
 } from "../controllers/productController.js";
+import { isAuthenticated } from "../middleware/auth.js";
 
 const upload = multer({ 
   storage: storage,
@@ -22,8 +24,9 @@ const router = express.Router();
 
 router.post("/upload-image", upload.single('image'), uploadImage);
 router.delete("/delete-image/:publicId", deleteImage);
-router.post("/add", addProduct);   
-router.get("/all", getProducts); 
+router.post("/add",isAuthenticated, addProduct);   
+router.get("/all",isAuthenticated, getProducts); 
+router.get("/allUser",isAuthenticated, getUserProducts); 
 router.get("/:id", getProduct);      
 router.put("/:id", updateProduct);   
 router.delete("/:id", deleteProduct); 

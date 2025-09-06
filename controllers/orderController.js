@@ -15,9 +15,8 @@ export const orders = catchAsyncError(async (req, res, next) => {
   if (!user) {
     return next(new ErrorHandler("User not found", 404));
   }
-
   const products = cartItems.map((item) => ({
-    name: item?.name,
+    name: item?.title,
     quantity: item?.quantity,
     price: item?.price,
     image: item?.image,
@@ -53,7 +52,7 @@ export const getOrders = catchAsyncError(async (req, res, next) => {
   const userId = req.user;
 
   const orders = await Order.find({ user: userId._id }).populate("user");
-
+  
   if (!orders || orders.length === 0) {
     return next(new ErrorHandler("No orders found", 404));
   }
@@ -70,7 +69,7 @@ export const getOrders = catchAsyncError(async (req, res, next) => {
 
 //Get AllOrders
 export const AllOrders = catchAsyncError(async (req, res, next) => {
-
+  
   const orders = await Order.find({
     user: { $ne: req.user._id }
   }).populate("user");
@@ -83,11 +82,6 @@ export const AllOrders = catchAsyncError(async (req, res, next) => {
     orders,
   });
 });
-
-
-
-
-
 
 
 

@@ -53,7 +53,8 @@ export const register = catchAsyncError(async (req, res, next) => {
 const sendVerificationEmail = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
+    port: parseInt(process.env.SMTP_PORT),
+    secure: true,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -229,15 +230,12 @@ await user.save()
 
 
 
-
-
-
-
 // SEND VERIFICATION EMAIL
 const sendVerificationEmailForget = async (email, verificationToken) => {
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
+    port: parseInt(process.env.SMTP_PORT),
+    secure: true,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
@@ -246,7 +244,7 @@ const sendVerificationEmailForget = async (email, verificationToken) => {
 
 
   const mailOptions = {
-       from: process.env.MAIL_FROM,
+    from: process.env.MAIL_FROM || `"HL" <${process.env.SMTP_USER}>`,
     to: email,
     subject: "Verify your email",
     html: `
@@ -394,8 +392,7 @@ export const deleteAddress = catchAsyncError(async (req, res, next) => {
 //Get all users
 
 export const users = catchAsyncError(async (req, res, next) => {
-  const users = await User.find({ _id: { $ne: req.user._id } }).populate("orders").exec();;
-
+  const users = await User.find({ _id: { $ne: req.user._id } }).populate("orders").populate("products").exec();;
   if (!users) {
     return next(new ErrorHandler("Users Not Found", 404));
   }
